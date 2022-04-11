@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Category;
 use App\Http\Controllers\Controller;
 use App\Post;
 use Illuminate\Http\Request;
@@ -16,15 +17,18 @@ class PostController extends Controller
     public function index()
     {
         //ricavo tutte le informazioni del post, con category_id uguale all'ID della categoria, senza altri dettagli
-        $posts = Post::all();
+        /* $posts = Post::all(); */
 
         $posts = Post::with(["category"])->get();
+
+        $posts = Post::paginate(2);
 
 
         //ritorno la risposta, in forma di json cos' da poterla usare all'interno del programma con axios
         return response()->json(
             [
                 "results" => $posts,
+                /* "category" => $posts->category()->get(), */
                 "success" => true
             ]
         );

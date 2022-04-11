@@ -1931,19 +1931,51 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "Main",
   data: function data() {
     return {
-      posts: []
+      posts: [],
+      currentPage: 1,
+      lastPage: null
     };
   },
-  created: function created() {
-    var _this = this;
+  methods: {
+    //passiamo alla chiamata axios come parametro, la pagina dove deve andare
+    changePagePosts: function changePagePosts(PaginaDaCambiare) {
+      var _this = this;
 
-    axios.get("/api/posts").then(function (response) {
-      _this.posts = response.data.results;
-    });
+      axios.get("/api/posts", {
+        "params": {
+          "page": PaginaDaCambiare
+        }
+      }).then(function (response) {
+        console.log(response); //Aggiorniamo la pagina corrente, con la variabile "current_page" creata in automatico da Laravel
+
+        _this.currentPage = response.data.results.current_page;
+        _this.posts = response.data.results.data;
+        console.log(_this.posts);
+        _this.lastPage = response.data.results.last_page;
+      });
+    }
+  },
+  created: function created() {
+    this.changePagePosts(this.currentPage);
   }
 });
 
@@ -2490,15 +2522,6 @@ var render = function () {
               ]),
               _vm._v(" "),
               _c(
-                "button",
-                {
-                  staticClass: "btn btn-outline-success",
-                  attrs: { type: "button" },
-                },
-                [_vm._v(_vm._s(post.category.name))]
-              ),
-              _vm._v(" "),
-              _c(
                 "a",
                 { staticClass: "btn btn-primary", attrs: { href: "#" } },
                 [_vm._v("Mostra dettagli post")]
@@ -2509,6 +2532,54 @@ var render = function () {
       }),
       0
     ),
+    _vm._v(" "),
+    _c("nav", { attrs: { "aria-label": "Page navigation example" } }, [
+      _c("ul", { staticClass: "pagination" }, [
+        _c(
+          "li",
+          {
+            staticClass: "page-item",
+            class: _vm.currentPage == 1 ? "d-none" : "",
+          },
+          [
+            _c(
+              "button",
+              {
+                staticClass: "page-link",
+                on: {
+                  click: function ($event) {
+                    return _vm.changePagePosts(_vm.currentPage - 1)
+                  },
+                },
+              },
+              [_vm._v("Previous")]
+            ),
+          ]
+        ),
+        _vm._v(" "),
+        _c(
+          "li",
+          {
+            staticClass: "page-item",
+            class: _vm.currentPage == _vm.lastPage ? "d-none" : "",
+          },
+          [
+            _c(
+              "button",
+              {
+                staticClass: "page-link",
+                on: {
+                  click: function ($event) {
+                    return _vm.changePagePosts(_vm.currentPage + 1)
+                  },
+                },
+              },
+              [_vm._v("Next")]
+            ),
+          ]
+        ),
+      ]),
+    ]),
   ])
 }
 var staticRenderFns = []
