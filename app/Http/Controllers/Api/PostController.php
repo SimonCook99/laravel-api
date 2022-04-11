@@ -19,6 +19,9 @@ class PostController extends Controller
         //ricavo tutte le informazioni del post, con category_id uguale all'ID della categoria, senza altri dettagli
         /* $posts = Post::all(); */
 
+        //aggiungo le informazioni della categoria associata al post, 
+        //chiamando la funzione "category" del Model "Post.php" nelle parentesi quadre
+        
         $posts = Post::with(["category"])->get();
 
         $posts = Post::paginate(2);
